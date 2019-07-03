@@ -124,7 +124,7 @@ class JavaObjectTypeRenderer @Inject constructor(override val vrapTypeProvider: 
     fun ObjectType.renderDiscriminatorValue() : String {
         val discriminatorProperty = discriminatorProperty()
         if (discriminatorProperty?.type?.enum?.size?:0 > 0) {
-            return "${discriminatorProperty?.type?.name}.${discriminatorValue.enumValueName()}"
+            return "${discriminatorProperty?.type?.toVrapType()?.simpleName()}.${discriminatorValue.enumValueName()}"
         } else {
             return """"${discriminatorValue}""""
         }

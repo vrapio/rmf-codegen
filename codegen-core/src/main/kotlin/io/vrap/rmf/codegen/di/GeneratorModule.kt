@@ -15,7 +15,6 @@ import io.vrap.rmf.raml.model.elements.NamedElement
 import io.vrap.rmf.raml.model.modules.Api
 import io.vrap.rmf.raml.model.resources.Method
 import io.vrap.rmf.raml.model.resources.Resource
-import io.vrap.rmf.raml.model.resources.util.ResourcesSwitch
 import io.vrap.rmf.raml.model.types.AnyType
 import io.vrap.rmf.raml.model.types.ObjectType
 import io.vrap.rmf.raml.model.types.StringType
@@ -41,7 +40,7 @@ class GeneratorModule constructor(
     @Provides
     @Singleton
     @Named(VrapConstants.OUTPUT_FOLDER)
-    fun outpuFolder(): Path = generatorConfig.outputFolder
+    fun outputFolder(): Path = generatorConfig.outputFolder
 
     @Provides
     @Singleton
@@ -50,6 +49,14 @@ class GeneratorModule constructor(
     @Provides
     @Singleton
     fun customTypeMapping(): Map<String, VrapType> = generatorConfig.customTypeMapping
+
+    /**
+     * The prefix to add to the type names of all generated model types.
+     */
+    @Provides
+    @Singleton
+    @Named(VrapConstants.TYPE_NAME_PREFIX)
+    fun typePrefix() = generatorConfig.typeNamePrefix
 
     @Provides
     @Singleton

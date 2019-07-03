@@ -78,6 +78,7 @@ class BuildLogicFunctionalTest {
         |                       'StateKeyReference': 'com.commercetools.importstorage.resolvable.models.common.ResolvableReference',
         |                       'TaxCategoryKeyReference': 'com.commercetools.importstorage.resolvable.models.common.ResolvableReference'
         |               ]
+        |               typeNamePrefix = 'Resol'
         |          }
         |          importStorageService {
         |               path = file('import-api2/build/generated-classes')
