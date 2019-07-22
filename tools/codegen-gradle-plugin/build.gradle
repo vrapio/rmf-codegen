@@ -1,0 +1,79 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.41'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'com.gradle.plugin-publish'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+publishing {
+    publications {
+        Maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile project(':languages:javalang:java-renderer')
+    compile project(':languages:javalang:builder-renderer:java-builder-client')
+    compile project(':languages:typescript')
+    compile project(':languages:php')
+    compile gradleApi()
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testCompile 'junit:junit:4.12'
+    testCompile gradleTestKit()
+    testCompile "org.spockframework:spock-core:${versions.spock}"
+    testCompile "org.assertj:assertj-core:3.10.0"
+}
+
+
+gradlePlugin {
+    plugins {
+        gradlePlugin {
+            id = 'io.vrap.rmf.codegen-plugin'
+            implementationClass = 'io.vrap.rmf.codegen.plugin.RamlCodegenPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'http://www.vrap.io/'
+    vcsUrl = 'https://github.com/vrapio/rmf-codegen/tree/master/codegen-gradle-plugin'
+    plugins {
+        gradlePlugin {
+            id = 'io.vrap.rmf.codegen-plugin'
+            displayName = 'Raml codegenerator'
+            description = 'This a code generator for the ramle specification, the supported language for this version is java'
+            tags = ['RAML', 'java']
+        }
+    }
+}
+
+task createClasspathManifest {
+    def outputDir = file("$buildDir/testClasspath")
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-under-test-metadata.properties").text = "implementation-classpath="+sourceSets.main.runtimeClasspath.join(":")
+    }
+}
+
+// Add the classpath file to the test runtime classpath
+dependencies {
+    testRuntime files(createClasspathManifest)
+}
+
+shadowJar{
+    append "plugin.properties"
+}
+
+compileJava.finalizedBy(createClasspathManifest)

@@ -26,4 +26,4 @@ rmf-codegen.iml
 rmf-codegen.iml
 generated-code/build
 generated-code/out
-generated-code/src
+languages/javalang/builder-renderer/generated-code/src/main

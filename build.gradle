@@ -26,12 +26,13 @@ plugins {
     
     id 'com.gradle.plugin-publish' version '0.9.1'
     id 'org.inferred.processors' version '1.2.16'
+    id 'com.github.johnrengelman.shadow' version '4.0.3'
 }
 
 ext {
     versions = [
             spock: "1.1-groovy-2.4",
-            rmf: "0.2.0-20190619145439",
+            rmf: "0.2.0-20190626123820",
             kotlin: "1.3.10 "
     ]
 }
@@ -104,7 +105,7 @@ subprojects { project ->
 
         pkg {
             repo = 'vrapio'
-            name = 'rmf'
+            name = 'rmf-codegen'
             userOrg = 'vrapio'
             licenses = ['MIT']
             vcsUrl = 'https://github.com/vrapio/rmf-codegen'

@@ -13,7 +13,11 @@ class AnyTypeProvider @Inject constructor(val packageProvider: PackageProvider, 
         return if (oneOfWithoutNilType.size == 1) {
             doSwitch(oneOfWithoutNilType[0])
         } else {
-            languageBaseTypes.objectType
+            if( unionType.name !=null){
+                VrapObjectType(`package` = packageProvider.doSwitch(unionType), simpleClassName = unionType.name)
+            }
+            else
+                languageBaseTypes.objectType
         }
     }
 
@@ -72,4 +76,6 @@ class AnyTypeProvider @Inject constructor(val packageProvider: PackageProvider, 
             return VrapEnumType(`package` = packageProvider.doSwitch(stringType), simpleClassName = typeNamePrefix + stringType.name)
         }
     }
+
+
 }

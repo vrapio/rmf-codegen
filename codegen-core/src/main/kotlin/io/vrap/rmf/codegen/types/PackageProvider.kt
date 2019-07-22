@@ -1,7 +1,9 @@
 package io.vrap.rmf.codegen.types
 
 import com.google.inject.Inject
-import com.google.inject.name.Named
+import io.vrap.rmf.codegen.di.BasePackageName
+import io.vrap.rmf.codegen.di.ClientPackageName
+import io.vrap.rmf.codegen.di.ModelPackageName
 import io.vrap.rmf.raml.model.modules.Library
 import io.vrap.rmf.raml.model.resources.Method
 import io.vrap.rmf.raml.model.resources.Resource
@@ -14,9 +16,9 @@ import org.eclipse.emf.ecore.util.ComposedSwitch
 
 
 class PackageProvider @Inject constructor(
-        @Named(io.vrap.rmf.codegen.di.VrapConstants.BASE_PACKAGE_NAME) val basePackage: String,
-        @Named(io.vrap.rmf.codegen.di.VrapConstants.MODEL_PACKAGE_NAME) val modelPackage: String,
-        @Named(io.vrap.rmf.codegen.di.VrapConstants.CLIENT_PACKAGE_NAME) val clientPackage: String
+        @BasePackageName val basePackage: String,
+        @ModelPackageName val modelPackage: String,
+        @ClientPackageName val clientPackage: String
 ) : ComposedSwitch<String>() {
 
     init {

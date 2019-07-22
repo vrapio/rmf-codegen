@@ -1,0 +1,15 @@
+publishing {
+    publications {
+        Maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile project(':languages:javalang:builder-renderer:commercetools-java-client')
+    compile project(':languages:javalang:builder-renderer:commercetools-java-base')
+    compile group: 'junit', name: 'junit', version: '4.12'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'javax.validation:validation-api:2.0.1.Final'
+}

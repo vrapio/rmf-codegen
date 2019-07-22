@@ -28,8 +28,12 @@ import java.nio.file.Path
 @SuppressWarnings("unused")
 class GeneratorModule constructor(
         private val apiProvider: ApiProvider,
-        @get:Provides val generatorConfig: io.vrap.rmf.codegen.CodeGeneratorConfig,
-        @get:Provides val languageBaseTypes: LanguageBaseTypes) : AbstractModule() {
+        @get:Provides @get:Singleton val generatorConfig: io.vrap.rmf.codegen.CodeGeneratorConfig,
+        @get:Provides @get:Singleton val languageBaseTypes: LanguageBaseTypes,
+        private val defaultPackage: String = "io.vrap.rmf"
+
+
+) : AbstractModule() {
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(io.vrap.rmf.codegen.di.GeneratorModule::class.java)
@@ -37,14 +41,15 @@ class GeneratorModule constructor(
 
     private val filterSwitch = UserProvidedResourcesFilterSwitch()
 
-    @Provides
-    @Singleton
-    @Named(VrapConstants.OUTPUT_FOLDER)
-    fun outputFolder(): Path = generatorConfig.outputFolder
 
     @Provides
     @Singleton
-    fun dataSink(@Named(io.vrap.rmf.codegen.di.VrapConstants.OUTPUT_FOLDER) path: Path):DataSink = FileDataSink(path)
+    @Named(VrapConstants.OUTPUT_FOLDER)
+    fun outpuFolder(): Path = generatorConfig.outputFolder
+
+    @Provides
+    @Singleton
+    fun dataSink(@OutputFolder path: Path): DataSink = FileDataSink(path)
 
     @Provides
     @Singleton
@@ -60,24 +65,29 @@ class GeneratorModule constructor(
 
     @Provides
     @Singleton
-    @Named(io.vrap.rmf.codegen.di.VrapConstants.BASE_PACKAGE_NAME)
-    fun providePackageName(api: Api): String {
+    @BasePackageName
+    fun providePackageName(
+            @DefaultPackage defaultPackage: String,
+            api: Api
+    ): String {
         if (generatorConfig.basePackageName == null && api.baseUri == null) {
-            io.vrap.rmf.codegen.di.GeneratorModule.Companion.LOGGER.warn("Could not find proper package name configuration. Using default ${io.vrap.rmf.codegen.di.VrapConstants.PACKAGE_DEFAULT}")
-            return io.vrap.rmf.codegen.di.VrapConstants.PACKAGE_DEFAULT
+            io.vrap.rmf.codegen.di.GeneratorModule.Companion.LOGGER.warn("Could not find proper package name configuration. Using default $defaultPackage")
+            return defaultPackage
         }
-        return generatorConfig.basePackageName?: URI(api.baseUri.expand()).host.split(".").reversed().joinToString(".")
+        return generatorConfig.basePackageName ?: URI(api.baseUri.expand()).host.split(".").reversed().joinToString(".")
     }
 
     @Provides
     @Singleton
-    @Named(io.vrap.rmf.codegen.di.VrapConstants.MODEL_PACKAGE_NAME)
-    fun provideModelPackageName(@Named(io.vrap.rmf.codegen.di.VrapConstants.BASE_PACKAGE_NAME) basePackageName:String): String = generatorConfig.modelPackage?: if(basePackageName.isBlank()) "models" else "$basePackageName.models"
+    @ModelPackageName
+    fun provideModelPackageName(@BasePackageName basePackageName: String): String = generatorConfig.modelPackage
+            ?: if (basePackageName.isBlank()) "models" else "$basePackageName.models"
 
     @Provides
     @Singleton
-    @Named(io.vrap.rmf.codegen.di.VrapConstants.CLIENT_PACKAGE_NAME)
-    fun provideClientPackageName(@Named(io.vrap.rmf.codegen.di.VrapConstants.BASE_PACKAGE_NAME) basePackageName:String): String = generatorConfig.clientPackage?:  if(basePackageName.isBlank())  "client" else "$basePackageName.client"
+    @ClientPackageName
+    fun provideClientPackageName(@BasePackageName basePackageName: String): String = generatorConfig.clientPackage
+            ?: if (basePackageName.isBlank()) "client" else "$basePackageName.client"
 
     @Provides
     @Singleton
@@ -94,11 +104,11 @@ class GeneratorModule constructor(
 
     @Provides
     @Singleton
-    fun allObjectTypes(anyTypeList: MutableList<AnyType>):List<ObjectType> = anyTypeList.filter { it is ObjectType }.map { it as ObjectType }
+    fun allObjectTypes(anyTypeList: MutableList<AnyType>): List<ObjectType> = anyTypeList.filter { it is ObjectType }.map { it as ObjectType }
 
     @Provides
     @Singleton
-    fun allStringTypes(anyTypeList: MutableList<AnyType>):List<StringType> = anyTypeList.filter { it is StringType }.map { it as StringType }
+    fun allStringTypes(anyTypeList: MutableList<AnyType>): List<StringType> = anyTypeList.filter { it is StringType }.map { it as StringType }
 
     @Provides
     @Singleton
