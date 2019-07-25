@@ -3,7 +3,6 @@ package io.vrap.rmf.codegen.di
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.google.inject.name.Named
 import io.vrap.rmf.codegen.common.generator.core.ResourceCollection
 import io.vrap.rmf.codegen.io.DataSink
 import io.vrap.rmf.codegen.io.FileDataSink
@@ -44,7 +43,13 @@ class GeneratorModule constructor(
 
     @Provides
     @Singleton
-    @Named(VrapConstants.OUTPUT_FOLDER)
+    @DefaultPackage
+    fun defaultPackage(): String = defaultPackage
+
+
+    @Provides
+    @Singleton
+    @OutputFolder
     fun outpuFolder(): Path = generatorConfig.outputFolder
 
     @Provides
@@ -60,7 +65,7 @@ class GeneratorModule constructor(
      */
     @Provides
     @Singleton
-    @Named(VrapConstants.TYPE_NAME_PREFIX)
+    @TypeNamePrefix
     fun typePrefix() = generatorConfig.typeNamePrefix
 
     @Provides

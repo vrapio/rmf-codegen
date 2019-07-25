@@ -1,8 +1,7 @@
 package io.vrap.rmf.codegen.types
 
 import com.google.inject.Inject
-import com.google.inject.name.Named
-import io.vrap.rmf.codegen.di.VrapConstants
+import io.vrap.rmf.codegen.di.TypeNamePrefix
 import io.vrap.rmf.raml.model.elements.NamedElement
 import io.vrap.rmf.raml.model.types.ArrayType
 import org.eclipse.emf.ecore.EObject
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory
 
 class VrapTypeProvider @Inject constructor(packageProvider: PackageProvider,
                                            val languageBaseTypes: LanguageBaseTypes,
-                                           @Named(VrapConstants.TYPE_NAME_PREFIX) val typeNamePrefix: String,
+                                           @TypeNamePrefix val typeNamePrefix: String,
                                            val customTypeMapping: MutableMap<String, VrapType>
 ) : ComposedSwitch<VrapType>() {
 

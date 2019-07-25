@@ -25,6 +25,14 @@ annotation class OutputFolder
         AnnotationTarget.VALUE_PARAMETER,
         AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
+annotation class TypeNamePrefix
+
+@BindingAnnotation
+@Target(AnnotationTarget.FIELD,
+        AnnotationTarget.TYPE_PARAMETER,
+        AnnotationTarget.VALUE_PARAMETER,
+        AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class ClientPackageName
 
 
