@@ -222,7 +222,7 @@ class PhpBuilderObjectTypeRenderer @Inject constructor(override val vrapTypeProv
 
         return this.allProperties
                 .filter { property -> property != discriminator }
-                .filter { !it.isPatternProperty() }.joinToString(separator = "\n\n") { it.getter() }
+                .filterNot { it.isPatternProperty() }.joinToString(separator = "\n\n") { it.getter() }
     }
 
     fun Property.wither(): String {
