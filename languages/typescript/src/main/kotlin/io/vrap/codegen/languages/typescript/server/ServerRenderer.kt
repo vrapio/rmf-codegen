@@ -1,5 +1,6 @@
 package io.vrap.codegen.languages.typescript.server
 
+import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import io.vrap.codegen.languages.extensions.*
 import io.vrap.codegen.languages.typescript.*
@@ -13,6 +14,7 @@ import io.vrap.rmf.raml.model.modules.Api
 import io.vrap.rmf.raml.model.resources.Method
 import io.vrap.rmf.raml.model.resources.Resource
 import io.vrap.rmf.raml.model.resources.ResourceContainer
+import io.vrap.rmf.raml.model.responses.Response
 import io.vrap.rmf.raml.model.types.ArrayInstance
 import io.vrap.rmf.raml.model.types.StringInstance
 
@@ -116,8 +118,9 @@ class ServerRenderer @Inject constructor(
                         |            ${if(it.hasQueryParams()) "queryParams: request.query as any," else ""}
                         |            <${if(it.hasBody()) "body: request.payload as any" else ""}>
                         |          });
+                        |          ${it.removeUnknownProperties()}
                         |          const response = responseToolkit
-                        |            .response(${if(it.hasReturnPayload()) "result.body" else ""})
+                        |            .response(${if(it.hasReturnPayload()) "body" else ""})
                         |            .code(result.statusCode);
                         |          // Add headers to response
                         |          for (const header in result.headers) {
@@ -177,6 +180,28 @@ class ServerRenderer @Inject constructor(
         return ""
     }
 
+    private fun Response.stripUnkownProperties(): String {
+        if (this.bodies.size == 1) {
+            val joiValidator = this.bodies[0].type.toVrapType().simpleJoiName()
+            return """|              case ${this.statusCode}: {
+                      |                 body = ${joiValidator}().validate(result.body, { stripUnknown: true })
+                      |                 break
+                      |              }"""
+        }
+        return ""
+    }
+
+    private fun Method.removeUnknownProperties(): String {
+        if (this.responses.size > 0) {
+            val cases = this.responses.joinToString(separator = "\n") { it.stripUnkownProperties() }
+            return """|          let body  
+                      |          switch (result.statusCode) {
+                      $cases
+                      |          }"""
+        }
+        return ""
+    }
+
     private fun Method.handlerNavigator(): String = this.resource().fullUri
             .template
             .split("/")
@@ -216,17 +241,27 @@ class ServerRenderer @Inject constructor(
     }
 
     private fun joiValidatorImports(moduleName: String): String {
-        return api.allMethods()
+        val requestTypes = api.allMethods()
                 .filter { it.bodies.isNotEmpty() }
                 .map { it.bodies[0] }
                 .filter { it.type != null }
                 .map { it.type.toVrapType() }
+        val responseTypes = api.allMethods()
+                .filter { it.responses.size > 0  }
+                .flatMap {  it.responses }
+                .filter { it.bodies.size == 1}
+                .map { it.bodies[0].type }
+                .filter { it != null }
+                .map { it.toVrapType() }
+
+        val allTypes = Iterables.concat(requestTypes, responseTypes).toMutableList()
+
+        return allTypes
                 .distinct()
                 .map {
                     it.joiImportStatement()
                 }
                 .joinToString(separator = "\n")
-
     }
 
     private fun VrapType.joiImportStatement():String {
