@@ -131,7 +131,8 @@ class JoiValidatorModuleRenderer @Inject constructor(override val vrapTypeProvid
         val discriminatorConstraint = if (this == current.discriminatorProperty()) ".only('${current.discriminatorValue}')" else ""
         val requiredConstraint = if (this.required) ".required()" else ".optional()"
         val maxConstraint = if (this.type is ArrayType && (this.type as ArrayType).maxItems != null) ".max(${(this.type as ArrayType).maxItems})" else ""
-        return "${name}: ${vrapType.renderTypeRef()}${maxConstraint}${discriminatorConstraint}${requiredConstraint}"
+        val typeRef = if (this == current.discriminatorProperty()) "Joi.string()" else vrapType.renderTypeRef()
+        return "${name}: ${typeRef}${maxConstraint}${discriminatorConstraint}${requiredConstraint}"
     }
 
     fun VrapType.renderTypeRef(): String {
