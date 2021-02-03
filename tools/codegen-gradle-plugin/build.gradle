@@ -25,6 +25,7 @@ dependencies {
     compile project(':languages:javalang:java-renderer')
     compile project(':languages:javalang:builder-renderer:java-builder-client')
     compile project(':languages:typescript')
+    compile project(':languages:go')
     compile project(':languages:php')
     compile gradleApi()
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
