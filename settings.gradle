@@ -9,6 +9,7 @@ include 'languages:php'
 include 'languages:oas'
 include 'languages:postman'
 include 'languages:typescript'
+include 'languages:go'
 include 'languages:ramldoc'
 
 include 'tools:cli-application'

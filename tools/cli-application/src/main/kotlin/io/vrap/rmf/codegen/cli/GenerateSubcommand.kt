@@ -22,6 +22,9 @@ import io.vrap.codegen.languages.ramldoc.model.RamldocModelModule
 import io.vrap.codegen.languages.typescript.client.TypescriptClientModule
 import io.vrap.codegen.languages.typescript.model.TypeScriptBaseTypes
 import io.vrap.codegen.languages.typescript.model.TypescriptModelModule
+import io.vrap.codegen.languages.go.model.GoBaseTypes
+import io.vrap.codegen.languages.go.model.GoModelModule
+import io.vrap.codegen.languages.go.client.GoClientModule
 import io.vrap.rmf.codegen.CodeGeneratorConfig
 import io.vrap.rmf.codegen.di.ApiProvider
 import io.vrap.rmf.codegen.di.GeneratorComponent
@@ -42,6 +45,7 @@ enum class GenerationTarget {
     PHP_CLIENT,
     PHP_BASE,
     PHP_TEST,
+    GO_CLIENT,
     POSTMAN,
     RAML_DOC,
     CSHARP_CLIENT,
@@ -194,6 +198,10 @@ class GenerateSubcommand : Callable<Int> {
                     )
                     val generatorModule = GeneratorModule(apiProvider, ramlConfig, OasBaseTypes)
                     GeneratorComponent(generatorModule, OasModelModule)
+                }
+                GenerationTarget.GO_CLIENT -> {
+                    val generatorModule = GeneratorModule(apiProvider, generatorConfig, GoBaseTypes)
+                    GeneratorComponent(generatorModule, GoModelModule, GoClientModule)
                 }
                 else -> throw Exception()
             }

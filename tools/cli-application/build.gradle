@@ -37,6 +37,7 @@ dependencies {
     compile project(':languages:javalang:builder-renderer:java-builder-client')
     compile project(':languages:typescript')
     compile project(':languages:postman')
+    compile project(':languages:go')
     compile project(':languages:php')
     compile project(':languages:csharp')
     compile project(':languages:ramldoc')
