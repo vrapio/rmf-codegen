@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 @Command(
         version = [BuildInfo.VERSION],
         description = ["Allows to validate Raml files and generate code from them"],
-        subcommands = [GenerateSubcommand::class, VerifySubcommand::class]
+        subcommands = [GenerateSubcommand::class, VerifySubcommand::class, ValidationSubcommand::class]
 )
 class RMFCommand : Callable<Int> {
 
